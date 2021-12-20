@@ -1,0 +1,106 @@
+{{#if details.errorMessage}}
+  <div class="mt-2">
+    <div class="alert alert-danger">
+      <pre>{{details.errorMessage}}</pre>
+    </div>
+
+    {{#if (not (eq details.allowRetry false))}}
+      <button
+        type="button"
+        class="p-btn btn btn-sm btn-secondary retry-btn mt-2"
+        {{action "retryLookup"}}
+      >
+        {{#if running}}
+          {{fa-icon icon="spinner-third" fixedWidth=true spin=true}}
+        {{else}}
+          Retry Search
+        {{/if}}
+      </button>
+      <div class="mt-1">
+        <span class="p-footnote">
+          You can retry your search by pressing the "Retry Search" button.</span>
+      </div>
+    {{/if}}
+  </div>
+{{else}}
+  {{#if details}}
+    {{#each details as |job index|}}
+      {{#if (gt index 0)}}
+        <hr />
+      {{/if}}
+
+      <div class="mt-1">
+        <a class="p-link" href="https://app.twinwave.io/job/{{job.Job.ID}}">View Job in
+          TwinWave
+          {{fa-icon icon="external-link-square" class="external-link-icon"}}</a>
+      </div>
+
+      <div class="score">
+        <span class="p-key">Consolidated Score: </span>
+        <span class="p-value">{{job.Job.Score}}</span>
+      </div>
+
+      {{#if (get expandableTitleStates index)}}
+        <a
+          href="#"
+          class="expandable-title"
+          {{on "click" (action "toggleExpandableTitle" index)}}
+        >
+          <span class="text">Resources Analyzed #{{index}}:</span>
+          {{fa-icon "angle-up"}}
+        </a>
+
+        {{#each job.Job.URLs as |url|}}
+          <div class="info-block">
+            <div>
+              <span class="p-key">URL: </span>
+              <span class="p-value">{{url.URL}}</span>
+            </div>
+            <div>
+              <span class="p-key">Hostname: </span>
+              <span class="p-value">{{url.Hostname}}</span>
+            </div>
+            <div>
+              <span class="p-key">MD5: </span>
+              <span class="p-value">{{url.MD5}}</span>
+            </div>
+          </div>
+        {{/each}}
+
+        {{#each job.Job.Files as |file|}}
+          <div class="info-block">
+            <div>
+              <span class="p-key">Name: </span>
+              <span class="p-value">{{file.Name}}</span>
+            </div>
+            <div>
+              <span class="p-key">MD5: </span>
+              <span class="p-value">{{file.MD5}}</span>
+            </div>
+            <div>
+              <span class="p-key">SHA256: </span>
+              <span class="p-value">{{file.SHA256}}</span>
+            </div>
+            <div>
+              <span class="p-key">MimeType: </span>
+              <span class="p-value">{{file.MimeType}}</span>
+            </div>
+            <div>
+              <span class="p-key">Size: </span>
+              <span class="p-value">{{file.Size}}</span>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <a
+          href="#"
+          class="expandable-title"
+          {{on "click" (action "toggleExpandableTitle" index)}}
+        >
+          <span class="text">Resources Analyzed #{{index}}:</span>
+          {{fa-icon "angle-down"}}
+        </a>
+      {{/if}}
+    {{/each}}
+  {{/if}}
+{{/if}}
