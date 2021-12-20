@@ -26,7 +26,7 @@ module.exports = {
     'The TwinWave Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.',
   entityTypes: ['domain', 'url', 'sha256', 'md5'],
   onDemandOnly: true,
-  defaultColor: 'light-gray',
+  defaultColor: 'light-purple',
   /**
    * An array of style files (css or less) that will be included for your integration. Any styles specified in
    * the below files can be used in your custom template.
@@ -86,7 +86,7 @@ module.exports = {
       name: 'API Url',
       description:
         'API Url for TwinWave allows searching indicators via the TwinWave API ',
-      default: 'https://app.twinwave.io/',
+      default: 'https://api.twinwave.io',
       type: 'text',
       userCanEdit: true,
       adminOnly: false

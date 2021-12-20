@@ -217,7 +217,7 @@ const getSummary = (data) => {
     tags.push(`Total Jobs: ${jobs}`);
 
     for (const job of data.Jobs) {
-      tags.push(`Score: ${job.Job.Score}`);
+      tags.push(`Score: ${parseInt(job.Job.Score * 100)}`);
       if (job.Job.Verdict.length) {
         tags.push(`Verdict: ${job.Job.Verdict}`);
       }

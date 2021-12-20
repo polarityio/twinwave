@@ -5,6 +5,11 @@ polarity.export = PolarityComponent.extend({
   expandableTitleStates: {},
   init() {
     if (this.get('details').length === 1) this.set('expandableTitleStates', { 0: true });
+
+    this.get('details').forEach((job) => {
+      job.Job.Score = parseInt(job.Job.Score * 100);
+    });
+
     this._super(...arguments);
   },
   actions: {
