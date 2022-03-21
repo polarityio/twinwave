@@ -4,13 +4,14 @@ const config = require('./config/config');
 const fs = require('fs');
 const { map } = require('lodash/fp');
 const request = require('request');
+const util = require('util');
 
 let limiter = null;
 let requestWithDefaults;
 
 let Logger;
 
-const _setupLimiter = (options) => {
+let _setupLimiter = (options) => {
   limiter = new Bottleneck({
     maxConcurrent: Number.parseInt(options.maxConcurrent, 10), // no more than 5 lookups can be running at single time
     highWater: 100, // no more than 100 lookups can be queued up
@@ -22,7 +23,9 @@ const _setupLimiter = (options) => {
 function startup(logger) {
   let defaults = {};
   Logger = logger;
-  const { cert, key, passphrase, ca, proxy, rejectUnauthorized } = config.request;
+
+  let { cert, key, passphrase, ca, proxy, rejectUnauthorized } = config.request;
+
   if (typeof cert === 'string' && cert.length > 0) {
     defaults.cert = fs.readFileSync(cert);
   }
@@ -48,7 +51,7 @@ function startup(logger) {
     new Promise((resolve, reject) => {
       _requestWithDefaults(requestOptions, (err, res, body) => {
         if (err) return reject(err);
-        const response = { ...res, body };
+        let response = { ...res, body };
 
         try {
           checkForStatusError(response);
@@ -61,7 +64,7 @@ function startup(logger) {
     });
 }
 
-const buildRequestOptions = (entity, options, callback) => {
+const buildRequestOptions = (entity, options) => {
   let fieldType;
   let API_URL = options.url + '/v1/jobs/search';
 
@@ -91,19 +94,33 @@ const buildRequestOptions = (entity, options, callback) => {
   }
 };
 
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+
 const doLookup = async (entities, options, callback) => {
   if (!limiter) _setupLimiter(options);
 
   const fetchApiData = limiter.wrap(_fetchApiData);
 
   try {
-    const lookupResults = await Promise.all(
+    const results = await Promise.all(
       map(async (entity) => await fetchApiData(entity, options), entities)
     );
+    const lookupResults = JSON.stringify(results, getCircularReplacer());
 
-    return callback(null, lookupResults);
+    return callback(null, JSON.parse(lookupResults));
   } catch (err) {
-    return callback(err);
+    return err;
   }
 };
 
@@ -117,34 +134,42 @@ const _fetchApiData = async (entity, options) => {
 
     Logger.trace({ response }, 'REQUEST_RESPONSE');
 
-    const apiData = (fetchResponses[response.statusCode] || retryablePolarityResponse)(
-      entity,
-      response
-    );
+    const processedResponseData = await processResponseData(response, Logger);
 
-    Logger.trace({ apiData }, 'LOOKUP_RESULT');
+    const apiData = (
+      fetchResponses[processedResponseData.statusCode] || retryablePolarityResponse
+    )(entity, response);
+
     return apiData;
   } catch (err) {
-    const isConnectionReset = _.get(err, 'code', '') === 'ECONNRESET';
+    let isConnectionReset = _.get(err, 'code', '') === 'ECONNRESET';
     if (isConnectionReset) return retryablePolarityResponse(entity);
-    else throw polarityError(err);
+    else throw err;
   }
+};
+/*
+  This is for any data processing that may need to be done.  
+*/
+const processResponseData = async (response, Logger) => {
+  if (_.get(response, 'body')) {
+    response.body.Jobs.forEach((job) => {
+      job.Job.Score = parseInt(job.Job.Score * 100);
+    });
+  }
+  return response;
 };
 
 const checkForStatusError = (response) => {
-  const statusCode = response.statusCode;
-
-  Logger.trace({ STATUS_CODE: statusCode });
+  let statusCode = response.statusCode;
 
   if (![200, 429, 500, 502, 504].includes(statusCode)) {
-    const requestError = Error('Request Error');
+    let requestError = Error('Request Error');
     requestError.status = statusCode;
     requestError.description = JSON.stringify(response.body);
     requestError.requestOptions = requestOptions;
     throw requestError;
   }
 };
-
 /**
  * These functions return potential response objects the integration can return to the client
  */
@@ -168,8 +193,8 @@ const polarityResponse = (entity, { body }) => ({
     : null
 });
 
-const retryablePolarityResponse = (entity) => [
-  {
+const retryablePolarityResponse = (entity) => {
+  return {
     entity,
     isVolatile: true,
     data: {
@@ -180,8 +205,8 @@ const retryablePolarityResponse = (entity) => [
           'A temporary TwinWave API search limit was reached. You can retry your search by pressing the "Retry Search" button.'
       }
     }
-  }
-];
+  };
+};
 
 const fetchResponses = {
   200: polarityResponse,
@@ -213,11 +238,11 @@ const getSummary = (data) => {
   let tags = [];
 
   if (Object.keys(data.Jobs).length > 0) {
-    const jobs = data.Jobs.length;
+    let jobs = data.Jobs.length;
     tags.push(`Total Jobs: ${jobs}`);
 
     for (const job of data.Jobs) {
-      tags.push(`Score: ${parseInt(job.Job.Score * 100)}`);
+      tags.push(`Score: ${parseInt(job.Job.Score)}`);
       if (job.Job.Verdict.length) {
         tags.push(`Verdict: ${job.Job.Verdict}`);
       }

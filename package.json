@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "bottleneck": "^2.19.5",
+    "circular-json": "^0.5.9",
     "lodash": "^4.17.21",
     "request": "^2.88.2"
   },

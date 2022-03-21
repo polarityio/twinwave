@@ -51,7 +51,6 @@ beforeAll(() => {
       .reply(statusCode);
 
     doLookup([url], options, (err, lookupResults) => {
-      console.info('HERERERERERE', lookupResults);
       const details = lookupResults[0][0].data.details;
       expect(details.errorMessage).toBe(
         'A temporary TwinWave API search limit was reached. You can retry your search by pressing the "Retry Search" button.'
