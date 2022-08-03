@@ -3,15 +3,6 @@
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
   expandableTitleStates: {},
-  init() {
-    if (this.get('details').length === 1) this.set('expandableTitleStates', { 0: true });
-
-    this.get('details').forEach((job) => {
-      job.Job.Score = parseInt(job.Job.Score * 100);
-    });
-
-    this._super(...arguments);
-  },
   actions: {
     retryLookup: function () {
       this.set('running', true);
@@ -40,7 +31,6 @@ polarity.export = PolarityComponent.extend({
           [index]: !this.get('expandableTitleStates')[index]
         }
       );
-
       this.set(`expandableTitleStates`, modifiedExpandableTitleStates);
     }
   }
