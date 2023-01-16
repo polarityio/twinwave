@@ -1,0 +1,73 @@
+{
+  "name": "TwinWave",
+  "acronym": "TWIN",
+  "description": "The TwinWave Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.",
+  "entityTypes": [
+    "domain",
+    "url",
+    "SHA256",
+    "MD5"
+  ],
+  "onDemandOnly": true,
+  "defaultColor": "light-purple",
+  "styles": [
+    "./styles/styles.less"
+  ],
+  "block": {
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
+  },
+  "request": {
+    "cert": "",
+    "key": "",
+    "passphrase": "",
+    "ca": "",
+    "proxy": "",
+    "rejectUnauthorized": true
+  },
+  "logging": {
+    "level": "info"
+  },
+  "options": [
+    {
+      "key": "url",
+      "name": "API Url",
+      "description": "API Url for TwinWave allows searching indicators via the TwinWave API ",
+      "default": "https://api.twinwave.io",
+      "type": "text",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "apiKey",
+      "name": "API Key",
+      "description": "API Key provided by TwinWave allows access to make searches using the TwinWave API. ",
+      "default": "",
+      "type": "password",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "maxConcurrent",
+      "name": "Max Concurrent Requests",
+      "description": "Maximum number of concurrent requests.  Integration must be restarted after changing this option. Defaults to 20.",
+      "default": 20,
+      "type": "number",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "minTime",
+      "name": "Minimum Time Between Lookups",
+      "description": "Minimum amount of time in milliseconds between lookups. Integration must be restarted after changing this option. Defaults to 100.",
+      "default": 100,
+      "type": "number",
+      "userCanEdit": false,
+      "adminOnly": true
+    }
+  ]
+}
