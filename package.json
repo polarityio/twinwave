@@ -14,7 +14,7 @@
     "bottleneck": "^2.19.5",
     "circular-json": "^0.5.9",
     "lodash": "^4.17.21",
-    "request": "^2.88.2"
+    "postman-request": "^2.88.1-postman.31"
   },
   "devDependencies": {
     "jest": "^27.4.3",

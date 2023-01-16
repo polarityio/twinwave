@@ -23,8 +23,33 @@
     {{/if}}
   </div>
 {{else}}
-  {{#if details}}
-    {{#each details as |job index|}}
+  <ul class="nav nav-tabs">
+    {{#if details}}
+      <li class="nav-item">
+        <a
+          {{action "changeTab" "jobs"}}
+          class="nav-link {{if (or (eq activeTab "jobs") (not activeTab)) "active"}}"
+          href="#"
+        >
+          Jobs
+        </a>
+      </li>
+    {{/if}}
+    {{#if details}}
+      <li class="nav-item">
+        <a
+          {{action "changeTab" "submissions"}}
+          class="nav-link {{if (eq activeTab "submissions") "active"}}"
+          href="#"
+        >
+          URL Submission
+        </a>
+      </li>
+    {{/if}}
+  </ul>
+
+  {{#if (eq activeTab "jobs")}}
+    {{#each details.Jobs as |job index|}}
       {{#if (gt index 0)}}
         <hr />
       {{/if}}
@@ -102,5 +127,94 @@
         </a>
       {{/if}}
     {{/each}}
+  {{/if}}
+
+  {{#if (eq activeTab "submissions")}}
+    {{#if JobID}}
+      <div class="link-to-job-submission">
+        <h1>Link To URL Submission Job: </h1>
+        <a href="https://app.twinwave.io/job/{{JobID}}">View URL Submission in TwinWave
+          {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+      </div>
+    {{/if}}
+    <table>
+      <div class="url-submission">
+        <h1>URL Submission:</h1>
+        <tr>
+          <td>
+            {{input
+              class="url-to-scan"
+              onclick=(action (mut urlToScan value="target.value"))
+              value=urlToScan
+              placeholder="enter URL..."
+              required="true"
+            }}
+            {{#if urlValidationError}}
+              <div class="alert alert-danger mt-1">
+                {{urlValidationError}}
+              </div>
+            {{/if}}
+          </td>
+        </tr>
+        <span class="p-footnote">The target URL to visit and analyze. Uses the default
+          engines for your account.</span>
+      </div>
+      <div class="priority-options">
+        <h1>Priority:</h1>
+        <tr>
+          <td>
+            <label for="url">highest:</label>
+            <input
+              type="radio"
+              class="highest"
+              name="priority"
+              onclick={{action (mut priority) 1}}
+            />
+            <label for="url">high:</label>
+            <input
+              type="radio"
+              class=""
+              name="priority"
+              onclick={{action (mut priority) 5}}
+            />
+            <label for="url">normal:</label>
+            <input
+              type="radio"
+              class="low"
+              name="priority"
+              onclick={{action (mut priority) 10}}
+            />
+            <label for="url">low:</label>
+            <input
+              type="radio"
+              class="low"
+              name="priority"
+              onclick={{action (mut priority) 15}}
+            />
+            <label for="url">lower:</label>
+            <input
+              type="radio"
+              class="lowest"
+              name="priority"
+              onclick={{action (mut priority) 20}}
+            />
+          </td>
+        </tr>
+        <span class="p-footnote">The job"s priority relative to other jobs. Jobs with a
+          lower priority value are processed before those with a higher value. (e.g., a
+          priority=1 job will be processed before a priority=2 job.) You may omit this
+          field, in which case a default priority (10) is used. There are some standard
+          priorities available for your convenience: 1 (highest), 5 (high), 10 (normal),
+          15 (low), and 20 (lower).
+        </span>
+      </div>
+    </table>
+    <button class="submit-button" {{on "click" (action "submitUrlForScanning")}}>
+      {{#if running}}
+        {{fa-icon icon="spinner-third" fixedWidth=true spin=true}}
+      {{else}}
+        Submit URL
+      {{/if}}
+    </button>
   {{/if}}
 {{/if}}
