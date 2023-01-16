@@ -15,11 +15,6 @@ const startup = (logger) => {
 };
 
 /**
- * forEach entity
- *   MakeNetworkRequest1 -- Makes the network request, handles network errors only, returns raw network response
- *   HandleAPIErrors -- handles error handling of the API response
- *   CreateResultObject -- Handles any processing of the raw network response, creates a resultObject or resultMissObject
- *
  * @param entities
  * @param options
  * @param cb
@@ -52,8 +47,16 @@ const doLookup = async (entities, options, cb) => {
 
 const onMessage = async (payload, options, cb) => {
   try {
-    const response = await submitUrlForScanning(payload);
-    Logger.trace({ response }, 'RESPONSE');
+    let response;
+
+    switch (payload.action) {
+      case 'SUBMIT_URL_FOR_SCANNING':
+        response = await submitUrlForScanning(payload);
+        break;
+      default:
+        break;
+    }
+
     cb(null, response);
   } catch (error) {
     cb(error, {});
@@ -64,20 +67,4 @@ module.exports = {
   startup,
   doLookup,
   onMessage
-  // onDetails
 };
-
-// Twinwave: Ability to submit URLs and hashes for Twinwave to process
-// We have gotten the request from a few customers now to make this a bidirectional integration and allow for users to submit a file and url for processing by Twinwave.
-
-// From what I can tell the File and URL endpoints should work. Its unclear based on the docs if the file endpoint needs to actual file or not if it does then we will just implement URLs.
-
-// Endpoints to utilize for the integration:
-
-// https://api.twinwave.io/v1/jobs/urls
-
-// https://api.twinwave.io/v1/jobs/files
-
-// User Experience:
-
-// There is a Submit button that will take the entity (url or file) and submit it to the appropriate job endpoint. The return for the user should be a link back to twinwave for them to follow the job and a success the submission went through or not

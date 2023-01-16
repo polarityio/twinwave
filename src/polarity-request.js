@@ -25,6 +25,8 @@ class PolarityRequest {
   }
 
   async request (requestOptions) {
+    this.options = requestOptions;
+
     return new Promise(async (resolve, reject) => {
       this.requestWithDefaults(requestOptions, (err, response) => {
         if (err) {
@@ -58,14 +60,12 @@ class AuthenticatedPolarityRequest extends PolarityRequest {
   }
 
   async authenticateRequest (requestOptions) {
-    const authenticatedRequestOptions = {
+    return super.request({
       method: requestOptions.method,
       url: this.url + requestOptions.path,
       headers: this.headers,
       ...(get('body', requestOptions) && { body: requestOptions.body })
-    };
-
-    return super.request(authenticatedRequestOptions);
+    });
   }
 }
 

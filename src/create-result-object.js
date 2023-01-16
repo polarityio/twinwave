@@ -20,7 +20,7 @@ const createResultObject = (entity, apiResponse) => {
     entity,
     data: {
       summary: createSummary(apiResponse),
-      details: apiResponse.body ? apiResponse.body : {}
+      details: apiResponse.body
     }
   };
 };
