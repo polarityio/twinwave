@@ -55,7 +55,7 @@ const onMessage = async (payload, options, cb) => {
         cb(null, response);
         break;
       default:
-        cb(new Error(`Unknown action: ${payload.action}`));
+        return 
     }
   } catch (error) {
     Logger.error({ error }, 'Error in SUBMIT_URL_FOR_SCANNING');
