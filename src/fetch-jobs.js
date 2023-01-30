@@ -18,6 +18,7 @@ const fetchJobs = async (entity) => {
   if (!SUCCESS_CODES.includes(response.statusCode)) {
     throw new ApiRequestError(`Unexpected status code ${response.statusCode}`, {
       statusCode: response.statusCode,
+      body: response.body,
       requestOptions: response.requestOptions
     });
   }
