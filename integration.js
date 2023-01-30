@@ -1,7 +1,7 @@
 'use strict';
 
 const { setLogger } = require('./src/logger');
-const { parseErrorToReadableJSON } = require('./src/errors');
+const { parseErrorToReadableJSON, ApiRequestError } = require('./src/errors');
 const { authenticatedPolarityRequest } = require('./src/polarity-request');
 const fetchJobs = require('./src/fetch-jobs');
 const { createResultObject } = require('./src/create-result-object');
@@ -24,7 +24,7 @@ const doLookup = async (entities, options, cb) => {
   try {
     // set authentication headers and options
     authenticatedPolarityRequest.setAuthHeaders({
-      ...options,
+      url: options.url,
       'X-Api-key': options.apiKey
     });
 
@@ -46,19 +46,19 @@ const doLookup = async (entities, options, cb) => {
 };
 
 const onMessage = async (payload, options, cb) => {
-  try {
-    let response;
+  const Logger = Logger.getLogger();
 
+  try {
     switch (payload.action) {
       case 'SUBMIT_URL_FOR_SCANNING':
-        response = await submitUrlForScanning(payload);
+        const response = await submitUrlForScanning(payload);
+        cb(null, response);
         break;
       default:
-        break;
+        cb(new Error(`Unknown action: ${payload.action}`));
     }
-
-    cb(null, response);
   } catch (error) {
+    Logger.error({ error }, 'Error in SUBMIT_URL_FOR_SCANNING');
     cb(error, {});
   }
 };
