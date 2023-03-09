@@ -62,7 +62,8 @@ class AuthenticatedPolarityRequest extends PolarityRequest {
       method: requestOptions.method,
       url: this.url + requestOptions.path,
       headers: this.headers,
-      ...(get('body', requestOptions) && { body: requestOptions.body })
+      ...(get('body', requestOptions) && { body: requestOptions.body }),
+      ...(get('qs', requestOptions) && { qs: requestOptions.qs })
     };
 
     return super.request(authenticatedRequestOptions);

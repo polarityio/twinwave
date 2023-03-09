@@ -24,7 +24,7 @@ module.exports = {
    */
   description:
     'The TwinWave Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.',
-  entityTypes: ['domain', 'url', 'sha256', 'md5'],
+  entityTypes: ['domain', 'url', 'sha256', 'md5', 'ipv4'],
   onDemandOnly: true,
   defaultColor: 'light-purple',
   /**
@@ -71,7 +71,7 @@ module.exports = {
     rejectUnauthorized: true
   },
   logging: {
-    level: 'info' //trace, debug, info, warn, error, fatal
+    level: 'trace' //trace, debug, info, warn, error, fatal
   },
   /**
    * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured

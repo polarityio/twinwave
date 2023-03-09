@@ -58,6 +58,14 @@ const createSummary = (apiResponse) => {
  * @param apiResponse
  * @returns {boolean}
  */
-const isMiss = (apiResponse) => apiResponse.statusCode === 404;
+const isMiss = (apiResponse) => {
+  const body = apiResponse.body;
+  return (
+    Array.isArray(body.Jobs) &&
+    body.Jobs.length === 0 &&
+    Array.isArray(body.Forensics) &&
+    body.Forensics.length === 0
+  );
+};
 
 module.exports = { createResultObject, isMiss, createSummary };
