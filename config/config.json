@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "fb017cc0-cce1-11ed-aeee-075d3490155d",
   "name": "TwinWave",
   "acronym": "TWIN",
   "description": "The TwinWave Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.",
