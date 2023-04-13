@@ -24,7 +24,7 @@
   </div>
 {{else}}
   <ul class="nav nav-tabs">
-    {{#if details}}
+    {{#unless details.submitOnly}}
       <li class="nav-item">
         <a
           {{action "changeTab" "jobs"}}
@@ -34,187 +34,144 @@
           Jobs
         </a>
       </li>
-    {{/if}}
-    {{#if details}}
-      <li class="nav-item">
-        <a
-          {{action "changeTab" "submissions"}}
-          class="nav-link {{if (eq activeTab "submissions") "active"}}"
-          href="#"
-        >
-          URL Submission
-        </a>
-      </li>
-    {{/if}}
+    {{/unless}}
+    <li class="nav-item">
+      <a
+        {{action "changeTab" "submissions"}}
+        class="nav-link {{if (eq activeTab "submissions") "active"}}"
+        href="#"
+      >
+        Submit URL
+      </a>
+    </li>
   </ul>
 
   {{#if (eq activeTab "jobs")}}
-    {{#each details.Jobs as |job index|}}
-      {{#if (gt index 0)}}
-        <hr />
-      {{/if}}
-
-      <div class="mt-1">
-        <a class="p-link" href="https://app.twinwave.io/job/{{job.Job.ID}}">View Job in
-          TwinWave
-          {{fa-icon icon="external-link-square" class="external-link-icon"}}</a>
-      </div>
-
-      <div class="score">
-        <span class="p-key">Consolidated Score: </span>
-        <span class="p-value">{{job.Job.Score}}</span>
-      </div>
-
-      {{#if (get expandableTitleStates index)}}
-        <a
-          href="#"
-          class="expandable-title"
-          {{on "click" (action "toggleExpandableTitle" index)}}
-        >
-          <span class="text">Resources Analyzed #{{index}}:</span>
-          {{fa-icon "angle-up"}}
-        </a>
-
-        {{#each job.Job.URLs as |url|}}
-          <div class="info-block">
-            <div>
-              <span class="p-key">URL: </span>
-              <span class="p-value">{{url.URL}}</span>
-            </div>
-            <div>
-              <span class="p-key">Hostname: </span>
-              <span class="p-value">{{url.Hostname}}</span>
-            </div>
-            <div>
-              <span class="p-key">MD5: </span>
-              <span class="p-value">{{url.MD5}}</span>
+    {{#each jobs as |job index|}}
+      <div class="content-block">
+        <div {{action "toggleJob" index}} class="content-block-header {{if job.__open "content-open" "content-closed"}}">
+          <div class="d-flex align-items-center justify-content-between mt-0">
+            <div class="py-1">
+              {{#if job.Job.SubmittedURL}}
+                <a {{action "stopPropagation" (concat "https://app.twinwave.io/job/" job.Job.ID) bubbles=false}} class="p-link">{{job.Job.SubmittedURL.URL}}</a>
+              {{else if job.Job.SubmittedFile}}
+                <a {{action "stopPropagation" (concat "https://app.twinwave.io/job/" job.Job.ID) bubbles=false}} class="p-link">{{job.Job.SubmittedFile.Name}}</a>
+              {{/if}}
             </div>
           </div>
-        {{/each}}
-
-        {{#each job.Job.Files as |file|}}
-          <div class="info-block">
-            <div>
-              <span class="p-key">Name: </span>
-              <span class="p-value">{{file.Name}}</span>
+          <div class="d-flex align-items-end justify-content-between">
+            <div class="d-flex flex-column">
+              <div>
+                <span class="p-key">Score:</span>
+                <span class="p-value">{{job.Job._displayScore}}</span>
+              </div>
+              <div>
+                <span class="p-key">Resources:</span>
+                <span class="p-value">{{job.Job.ResourceCount}}</span>
+              </div>
             </div>
-            <div>
-              <span class="p-key">MD5: </span>
-              <span class="p-value">{{file.MD5}}</span>
-            </div>
-            <div>
-              <span class="p-key">SHA256: </span>
-              <span class="p-value">{{file.SHA256}}</span>
-            </div>
-            <div>
-              <span class="p-key">MimeType: </span>
-              <span class="p-value">{{file.MimeType}}</span>
-            </div>
-            <div>
-              <span class="p-key">Size: </span>
-              <span class="p-value">{{file.Size}}</span>
-            </div>
+            <div class="p-footnote">{{moment-format (get job.Job "@timestamp") "MM/DD/YYYY" timeZone=timeZone}}</div>
           </div>
-        {{/each}}
-      {{else}}
-        <a
-          href="#"
-          class="expandable-title"
-          {{on "click" (action "toggleExpandableTitle" index)}}
-        >
-          <span class="text">Resources Analyzed #{{index}}:</span>
-          {{fa-icon "angle-down"}}
-        </a>
-      {{/if}}
+        </div>
+        {{#if job.__open}}
+          <div class="content-text p-block">
+            {{#each job.Job.URLs as |url|}}
+              <div class="info-block">
+                <div>
+                  <span class="p-key">URL: </span>
+                  <span class="p-value">{{url.URL}}</span>
+                </div>
+                <div>
+                  <span class="p-key">Hostname: </span>
+                  <span class="p-value">{{url.Hostname}}</span>
+                </div>
+                <div>
+                  <span class="p-key">MD5: </span>
+                  <span class="p-value">{{url.MD5}}</span>
+                </div>
+              </div>
+            {{/each}}
+
+            {{#each job.Job.Files as |file|}}
+              <div class="info-block">
+                <div>
+                  <span class="p-key">Name: </span>
+                  <span class="p-value">{{file.Name}}</span>
+                </div>
+                <div>
+                  <span class="p-key">MD5: </span>
+                  <span class="p-value">{{file.MD5}}</span>
+                </div>
+                <div>
+                  <span class="p-key">SHA256: </span>
+                  <span class="p-value">{{file.SHA256}}</span>
+                </div>
+                <div>
+                  <span class="p-key">MimeType: </span>
+                  <span class="p-value">{{file.MimeType}}</span>
+                </div>
+                <div>
+                  <span class="p-key">Size: </span>
+                  <span class="p-value">{{file.Size}}</span>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+      </div>
     {{/each}}
   {{/if}}
+  {{!-- end of jobs --}}
 
-  {{#if (eq activeTab "submissions")}}
-    {{#if JobID}}
-      <div class="link-to-job-submission">
-        <h1>Link To URL Submission Job: </h1>
-        <a href="https://app.twinwave.io/job/{{JobID}}">View URL Submission in TwinWave
-          {{fa-icon "external-link-square" class="external-link-icon"}}</a>
-      </div>
-    {{/if}}
-    <table>
-      <div class="url-submission">
-        <h1>URL Submission:</h1>
-        <tr>
-          <td>
-            {{input
-              class="url-to-scan"
-              onclick=(action (mut urlToScan value="target.value"))
-              value=urlToScan
-              placeholder="enter URL..."
-              required="true"
-            }}
-            {{#if urlValidationError}}
-              <div class="alert alert-danger mt-1">
-                {{urlValidationError}}
-              </div>
-            {{/if}}
-          </td>
-        </tr>
-        <span class="p-footnote">The target URL to visit and analyze. Uses the default
-          engines for your account.</span>
-      </div>
-      <div class="priority-options">
-        <h1>Priority:</h1>
-        <tr>
-          <td>
-            <label for="url">highest:</label>
-            <input
-              type="radio"
-              class="highest"
-              name="priority"
-              onclick={{action (mut priority) 1}}
-            />
-            <label for="url">high:</label>
-            <input
-              type="radio"
-              class=""
-              name="priority"
-              onclick={{action (mut priority) 5}}
-            />
-            <label for="url">normal:</label>
-            <input
-              type="radio"
-              class="low"
-              name="priority"
-              onclick={{action (mut priority) 10}}
-            />
-            <label for="url">low:</label>
-            <input
-              type="radio"
-              class="low"
-              name="priority"
-              onclick={{action (mut priority) 15}}
-            />
-            <label for="url">lower:</label>
-            <input
-              type="radio"
-              class="lowest"
-              name="priority"
-              onclick={{action (mut priority) 20}}
-            />
-          </td>
-        </tr>
-        <span class="p-footnote">The job"s priority relative to other jobs. Jobs with a
-          lower priority value are processed before those with a higher value. (e.g., a
-          priority=1 job will be processed before a priority=2 job.) You may omit this
-          field, in which case a default priority (10) is used. There are some standard
-          priorities available for your convenience: 1 (highest), 5 (high), 10 (normal),
-          15 (low), and 20 (lower).
-        </span>
-      </div>
-    </table>
-    <button class="submit-button" {{on "click" (action "submitUrlForScanning")}}>
-      {{#if running}}
-        {{fa-icon icon="spinner-third" fixedWidth=true spin=true}}
-      {{else}}
-        Submit URL
+  {{#if (or (eq activeTab "submissions") details.submitOnly)}}
+    <div class="form-group mt-1">
+      <label>URL</label>
+      {{input
+        class="form-control form-control-sm"
+        onclick=(action (mut urlToScan value="target.value"))
+        value=urlToScan
+        placeholder="URL to submit ..."
+        required="true"
+      }}
+      {{#if urlValidationError}}
+        <div class="alert alert-danger mt-1">
+          {{urlValidationError}}
+        </div>
       {{/if}}
-    </button>
+      <div class="p-footnote pt-1">
+        The target URL to visit and analyze. Uses the default engines for your account.
+      </div>
+
+      <label class="pt-2">Priority</label>
+      <select class="form-control form-control-sm" onchange={{action (mut priority) value="target.value"}} disabled={{running}}>
+        <option disabled>Select a job priority</option>
+        <option value="1">Highest</option>
+        <option value="5">High</option>
+        <option selected value="10">Normal</option>
+        <option value="15">Low</option>
+        <option value="20">Lower</option>
+      </select>
+      <div class="p-footnote p-block pt-1">The job's priority relative to other jobs. Jobs with a
+        lower priority value are processed before those with a higher value.
+      </div>
+
+
+      <button class="submit-button" {{on "click" (action "submitUrlForScanning")}} disabled={{running}}>
+        {{#if running}}
+          {{fa-icon icon="spinner-third" fixedWidth=true spin=true}}
+        {{else}}
+          Submit URL
+        {{/if}}
+      </button>
+      {{#if JobID}}
+        <div class="pt-2">
+          <label>The URL was successfully submitted for analysis.</label>
+          <div>
+            <a href="https://app.twinwave.io/job/{{JobID}}">View URL Submission in TwinWave
+              {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+          </div>
+        </div>
+      {{/if}}
+    </div>
   {{/if}}
 {{/if}}

@@ -1,9 +1,9 @@
 'use strict';
 
-const { setLogger } = require('./src/logger');
+const { setLogger, getLogger } = require('./src/logger');
 const { parseErrorToReadableJSON, ApiRequestError } = require('./src/errors');
 const { authenticatedPolarityRequest } = require('./src/polarity-request');
-const fetchJobs = require('./src/fetch-jobs');
+const searchJobs = require('./src/search-jobs');
 const { createResultObject } = require('./src/create-result-object');
 const submitUrlForScanning = require('./src/submit-url-for-scanning');
 
@@ -30,9 +30,9 @@ const doLookup = async (entities, options, cb) => {
 
     const lookupResults = await Promise.all(
       entities.map(async (entity) => {
-        const jobs = await fetchJobs(entity);
+        const jobs = await searchJobs(entity);
 
-        return createResultObject(entity, jobs);
+        return createResultObject(entity, jobs, options);
       })
     );
 
@@ -46,16 +46,17 @@ const doLookup = async (entities, options, cb) => {
 };
 
 const onMessage = async (payload, options, cb) => {
-  const Logger = Logger.getLogger();
+  const Logger = getLogger();
 
   try {
     switch (payload.action) {
       case 'SUBMIT_URL_FOR_SCANNING':
-        const response = await submitUrlForScanning(payload);
+        const response = await submitUrlForScanning(payload, options);
+        Logger.trace({ response }, 'SUBMIT_URL_FOR_SCANNING Response');
         cb(null, response);
         break;
       default:
-        return 
+        return;
     }
   } catch (error) {
     Logger.error({ error }, 'Error in SUBMIT_URL_FOR_SCANNING');

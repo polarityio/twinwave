@@ -4,6 +4,14 @@ const { ApiRequestError } = require('./errors');
 
 const { SUCCESS_CODES } = require('./constants');
 
+/**
+ * Valid SAA field types are:
+ * "detection_name" "detection_desc" "domain" "filename" "filetype" "hostname" "ip" "md5" "mimetype" "sha256" "tag" "url"
+ *
+ * We map our Polarity entity types to one of these SAA field types above.
+ * @param entity
+ * @returns {string}
+ */
 const getTwinWaveType = (entity) => {
   if (entity.isMD5) {
     return 'md5';
@@ -12,7 +20,7 @@ const getTwinWaveType = (entity) => {
     return 'sha256';
   }
   if (entity.isDomain) {
-    return 'domain';
+    return 'url';
   }
   if (entity.isURL) {
     return 'url';
@@ -22,7 +30,7 @@ const getTwinWaveType = (entity) => {
   }
 };
 
-const fetchJobs = async (entity) => {
+const searchJobs = async (entity) => {
   const Logger = getLogger();
 
   const response = await authenticatedPolarityRequest.authenticateRequest({
@@ -32,7 +40,9 @@ const fetchJobs = async (entity) => {
       field: getTwinWaveType(entity),
       type: 'substring',
       term: `${entity.value}`,
-      mode: 'forensics'
+      // other mode is `forensics` but that mode can only search back 90 days
+      mode: 'resources',
+      count: 10
     }
   });
 
@@ -51,4 +61,4 @@ const fetchJobs = async (entity) => {
   return response;
 };
 
-module.exports = fetchJobs;
+module.exports = searchJobs;

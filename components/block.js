@@ -2,6 +2,7 @@
 
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
+  jobs: Ember.computed.alias('details.Jobs'),
   urlToScan: '',
   priority: 0,
   engines: [],
@@ -10,9 +11,23 @@ polarity.export = PolarityComponent.extend({
   expandableTitleStates: {},
   activeTab: 'jobs',
   JobID: '',
+  init: function () {
+    this._super(...arguments);
+    if (this.get('details.submitOnly')) {
+      this.set('urlToScan', this.get('block.entity.value'));
+      this.set('activeTab', 'submissions');
+    }
+  },
   actions: {
+    stopPropagation: function (url) {
+      console.info('Stop Propagation of link click');
+      window.open(url, '_blank');
+    },
     changeTab: function (tabName) {
       this.set('activeTab', tabName);
+    },
+    toggleJob: function (jobIndex) {
+      this.toggleProperty(`jobs.${jobIndex}.__open`);
     },
     retryLookup: function () {
       this.set('running', true);
@@ -41,7 +56,7 @@ polarity.export = PolarityComponent.extend({
       if (this.isValidUrl() === false) {
         this.set(
           'urlValidationError',
-          'Please enter a valid URL. URL must begin with a scheme (not limited to http/https), e.g https://www.google.com'
+          'Invalid URL. URLs must begin with the scheme `http://` or `https://`'
         );
         this.set('running', false);
         return;
