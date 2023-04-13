@@ -8,6 +8,7 @@
       <button
         type="button"
         class="p-btn btn btn-sm btn-secondary retry-btn mt-2"
+
         {{action "retryLookup"}}
       >
         {{#if running}}
@@ -75,6 +76,48 @@
         </div>
         {{#if job.__open}}
           <div class="content-text p-block">
+            {{#if (or job.Job.Verdict job.Job.Username)}}
+              <h1 class="p-title">{{fa-icon icon="info-circle" fixedWidth=true}} Info</h1>
+              {{#if job.Job.Verdict}}
+                <div>
+                  <span class="p-value">Verdict:</span>
+                  <span class="p-key">{{job.Job.verdict}}</span>
+                </div>
+              {{/if}}
+              {{#if job.Job.Username}}
+                <div>
+                  <span class="p-value">User:</span>
+                  <span class="p-key">{{job.Job.Username}}</span>
+                </div>
+              {{/if}}
+            {{/if}}
+
+            {{#if (gt job.Highlights.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="highlighter" fixedWidth=true}} Highlights</h1>
+              <ul class="highlights">
+              {{#each job.Highlights as |highlight|}}
+                  <li class="highlight-container">
+                    <div class="p-value highlight">{{{highlight.HTMLString}}}</div>
+                  </li>
+              {{/each}}
+              </ul>
+            {{/if}}
+
+            {{!--
+            {{#if (gt job.Job.Tasks.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="highlighter" fixedWidth=true}} Summary</h1>
+              {{#each job.Job.Tasks as |task|}}
+                <div class="summary-container d-flex align-items-center justify-content-between">
+                  <div>{{{task.EngineName}}}</div>
+                  <div>{{task.Score}}</div>
+                </div>
+              {{/each}}
+            {{/if}}
+            --}}
+
+            {{#if (gt job.Job.URLs.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="globe" fixedWidth=true}} URLs</h1>
+            {{/if}}
             {{#each job.Job.URLs as |url|}}
               <div class="info-block">
                 <div>
@@ -92,6 +135,9 @@
               </div>
             {{/each}}
 
+            {{#if (gt job.Job.Files.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="file" fixedWidth=true}} Files</h1>
+            {{/if}}
             {{#each job.Job.Files as |file|}}
               <div class="info-block">
                 <div>

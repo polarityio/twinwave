@@ -35,7 +35,7 @@ const searchJobs = async (entity) => {
 
   const response = await authenticatedPolarityRequest.authenticateRequest({
     method: 'GET',
-    path: '/v1/jobs/searchv2',
+    path: '/v1/jobs/searchv2/summary',
     qs: {
       field: getTwinWaveType(entity),
       type: 'substring',
