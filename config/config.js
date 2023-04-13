@@ -5,7 +5,7 @@ module.exports = {
    * @type String
    * @required
    */
-  name: 'TwinWave',
+  name: 'Splunk Attack Analyzer',
   /**
    * The acronym that appears in the notification window when information from this integration
    * is displayed.  Note that the acronym is included as part of each "tag" in the summary information
@@ -15,7 +15,7 @@ module.exports = {
    * @type String
    * @required
    */
-  acronym: 'TWIN',
+  acronym: 'SAA',
   /**
    * Description for this integration which is displayed in the Polarity integrations user interface
    *
@@ -23,8 +23,8 @@ module.exports = {
    * @optional
    */
   description:
-    'The TwinWave Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.',
-  entityTypes: ['domain', 'url', 'sha256', 'md5'],
+    'The Splunk Attack Analyzer (SAA) Polarity Integration searches the SAA API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.',
+  entityTypes: ['domain', 'url', 'sha256', 'md5', 'ipv4'],
   onDemandOnly: true,
   defaultColor: 'light-purple',
   /**
@@ -85,7 +85,7 @@ module.exports = {
       key: 'url',
       name: 'API Url',
       description:
-        'API Url for TwinWave allows searching indicators via the TwinWave API ',
+        'API Url for Splunk Attack Analyzer (SAA) allows searching indicators via the SAA API ',
       default: 'https://api.twinwave.io',
       type: 'text',
       userCanEdit: true,
@@ -95,29 +95,19 @@ module.exports = {
       key: 'apiKey',
       name: 'API Key',
       description:
-        'API Key provided by TwinWave allows access to make searches using the TwinWave API. ',
+        'Splunk Attack Analyzer API Key that supports searching via the SAA API. ',
       default: '',
       type: 'password',
       userCanEdit: true,
       adminOnly: false
     },
     {
-      key: 'maxConcurrent',
-      name: 'Max Concurrent Requests',
+      key: 'enableUrlSubmission',
+      name: 'Enable URL Submission',
       description:
-        'Maximum number of concurrent requests.  Integration must be restarted after changing this option. Defaults to 20.',
-      default: 20,
-      type: 'number',
-      userCanEdit: false,
-      adminOnly: true
-    },
-    {
-      key: 'minTime',
-      name: 'Minimum Time Between Lookups',
-      description:
-        'Minimum amount of time in milliseconds between lookups. Integration must be restarted after changing this option. Defaults to 100.',
-      default: 100,
-      type: 'number',
+        'If checked, the integration will support submitting URLs to Splunk Attack Analyzer for any searched URLs.',
+      default: true,
+      type: 'boolean',
       userCanEdit: false,
       adminOnly: true
     }

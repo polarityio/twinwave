@@ -1,7 +1,7 @@
 {
-  "name": "twinwave",
-  "version": "3.0.3-beta",
   "main": "./integration.js",
+  "name": "splunk-attack-analyzer",
+  "version": "3.1.0-2",
   "private": true,
   "jest": {
     "automock": false,
