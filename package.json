@@ -1,7 +1,7 @@
 {
-  "main": "./integration.js",
   "name": "splunk-attack-analyzer",
-  "version": "3.1.0",
+  "version": "3.1.1",
+  "main": "./integration.js",
   "private": true,
   "jest": {
     "automock": false,
