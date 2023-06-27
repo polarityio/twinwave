@@ -1,0 +1,65 @@
+{
+  "polarityIntegrationUuid": "fb017cc0-cce1-11ed-aeee-075d3490155d",
+  "name": "Splunk Attack Analyzer",
+  "acronym": "SAA",
+  "description": "The Splunk Attack Analyzer (SAA) Polarity Integration searches the SAA API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.",
+  "entityTypes": [
+    "domain",
+    "url",
+    "sha256",
+    "md5",
+    "ipv4"
+  ],
+  "onDemandOnly": true,
+  "defaultColor": "light-purple",
+  "styles": [
+    "./styles/styles.less"
+  ],
+  "block": {
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
+  },
+  "request": {
+    "cert": "",
+    "key": "",
+    "passphrase": "",
+    "ca": "",
+    "proxy": ""
+  },
+  "logging": {
+    "level": "info"
+  },
+  "options": [
+    {
+      "key": "url",
+      "name": "API Url",
+      "description": "API Url for Splunk Attack Analyzer (SAA) allows searching indicators via the SAA API ",
+      "default": "https://api.twinwave.io",
+      "type": "text",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "apiKey",
+      "name": "API Key",
+      "description": "Splunk Attack Analyzer API Key that supports searching via the SAA API. ",
+      "default": "",
+      "type": "password",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "enableUrlSubmission",
+      "name": "Enable URL Submission",
+      "description": "If checked, the integration will support submitting URLs to Splunk Attack Analyzer for any searched URLs.",
+      "default": true,
+      "type": "boolean",
+      "userCanEdit": false,
+      "adminOnly": true
+    }
+  ]
+}

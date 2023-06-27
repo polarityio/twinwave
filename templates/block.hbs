@@ -8,6 +8,7 @@
       <button
         type="button"
         class="p-btn btn btn-sm btn-secondary retry-btn mt-2"
+
         {{action "retryLookup"}}
       >
         {{#if running}}
@@ -23,84 +24,200 @@
     {{/if}}
   </div>
 {{else}}
-  {{#if details}}
-    {{#each details as |job index|}}
-      {{#if (gt index 0)}}
-        <hr />
-      {{/if}}
-
-      <div class="mt-1">
-        <a class="p-link" href="https://app.twinwave.io/job/{{job.Job.ID}}">View Job in
-          TwinWave
-          {{fa-icon icon="external-link-square" class="external-link-icon"}}</a>
-      </div>
-
-      <div class="score">
-        <span class="p-key">Consolidated Score: </span>
-        <span class="p-value">{{job.Job.Score}}</span>
-      </div>
-
-      {{#if (get expandableTitleStates index)}}
+  <ul class="nav nav-tabs">
+    {{#unless details.submitOnly}}
+      <li class="nav-item">
         <a
+          {{action "changeTab" "jobs"}}
+          class="nav-link {{if (or (eq activeTab "jobs") (not activeTab)) "active"}}"
           href="#"
-          class="expandable-title"
-          {{on "click" (action "toggleExpandableTitle" index)}}
         >
-          <span class="text">Resources Analyzed #{{index}}:</span>
-          {{fa-icon "angle-up"}}
+          Jobs
         </a>
+      </li>
+    {{/unless}}
+    <li class="nav-item">
+      <a
+        {{action "changeTab" "submissions"}}
+        class="nav-link {{if (eq activeTab "submissions") "active"}}"
+        href="#"
+      >
+        Submit URL
+      </a>
+    </li>
+  </ul>
 
-        {{#each job.Job.URLs as |url|}}
-          <div class="info-block">
-            <div>
-              <span class="p-key">URL: </span>
-              <span class="p-value">{{url.URL}}</span>
-            </div>
-            <div>
-              <span class="p-key">Hostname: </span>
-              <span class="p-value">{{url.Hostname}}</span>
-            </div>
-            <div>
-              <span class="p-key">MD5: </span>
-              <span class="p-value">{{url.MD5}}</span>
+  {{#if (eq activeTab "jobs")}}
+    {{#each jobs as |job index|}}
+      <div class="content-block">
+        <div {{action "toggleJob" index}} class="content-block-header {{if job.__open "content-open" "content-closed"}}">
+          <div class="d-flex align-items-center justify-content-between mt-0">
+            <div class="py-1">
+              {{#if job.Job.SubmittedURL}}
+                <a {{action "stopPropagation" (concat "https://app.twinwave.io/job/" job.Job.ID) bubbles=false}} class="p-link">{{job.Job.SubmittedURL.URL}}</a>
+              {{else if job.Job.SubmittedFile}}
+                <a {{action "stopPropagation" (concat "https://app.twinwave.io/job/" job.Job.ID) bubbles=false}} class="p-link">{{job.Job.SubmittedFile.Name}}</a>
+              {{/if}}
             </div>
           </div>
-        {{/each}}
-
-        {{#each job.Job.Files as |file|}}
-          <div class="info-block">
-            <div>
-              <span class="p-key">Name: </span>
-              <span class="p-value">{{file.Name}}</span>
+          <div class="d-flex align-items-end justify-content-between">
+            <div class="d-flex flex-column">
+              <div>
+                <span class="p-key">Score:</span>
+                <span class="p-value">{{job.Job._displayScore}}</span>
+              </div>
+              <div>
+                <span class="p-key">Resources:</span>
+                <span class="p-value">{{job.Job.ResourceCount}}</span>
+              </div>
             </div>
-            <div>
-              <span class="p-key">MD5: </span>
-              <span class="p-value">{{file.MD5}}</span>
-            </div>
-            <div>
-              <span class="p-key">SHA256: </span>
-              <span class="p-value">{{file.SHA256}}</span>
-            </div>
-            <div>
-              <span class="p-key">MimeType: </span>
-              <span class="p-value">{{file.MimeType}}</span>
-            </div>
-            <div>
-              <span class="p-key">Size: </span>
-              <span class="p-value">{{file.Size}}</span>
-            </div>
+            <div class="p-footnote">{{moment-format (get job.Job "@timestamp") "MM/DD/YYYY" timeZone=timeZone}}</div>
           </div>
-        {{/each}}
-      {{else}}
-        <a
-          href="#"
-          class="expandable-title"
-          {{on "click" (action "toggleExpandableTitle" index)}}
-        >
-          <span class="text">Resources Analyzed #{{index}}:</span>
-          {{fa-icon "angle-down"}}
-        </a>
-      {{/if}}
+        </div>
+        {{#if job.__open}}
+          <div class="content-text p-block">
+            {{#if (or job.Job.Verdict job.Job.Username)}}
+              <h1 class="p-title">{{fa-icon icon="info-circle" fixedWidth=true}} Info</h1>
+              {{#if job.Job.Verdict}}
+                <div>
+                  <span class="p-value">Verdict:</span>
+                  <span class="p-key">{{job.Job.verdict}}</span>
+                </div>
+              {{/if}}
+              {{#if job.Job.Username}}
+                <div>
+                  <span class="p-value">User:</span>
+                  <span class="p-key">{{job.Job.Username}}</span>
+                </div>
+              {{/if}}
+            {{/if}}
+
+            {{#if (gt job.Highlights.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="highlighter" fixedWidth=true}} Highlights</h1>
+              <ul class="highlights">
+              {{#each job.Highlights as |highlight|}}
+                  <li class="highlight-container">
+                    <div class="p-value highlight">{{{highlight.HTMLString}}}</div>
+                  </li>
+              {{/each}}
+              </ul>
+            {{/if}}
+
+            {{!--
+            {{#if (gt job.Job.Tasks.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="highlighter" fixedWidth=true}} Summary</h1>
+              {{#each job.Job.Tasks as |task|}}
+                <div class="summary-container d-flex align-items-center justify-content-between">
+                  <div>{{{task.EngineName}}}</div>
+                  <div>{{task.Score}}</div>
+                </div>
+              {{/each}}
+            {{/if}}
+            --}}
+
+            {{#if (gt job.Job.URLs.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="globe" fixedWidth=true}} URLs</h1>
+            {{/if}}
+            {{#each job.Job.URLs as |url|}}
+              <div class="info-block">
+                <div>
+                  <span class="p-key">URL: </span>
+                  <span class="p-value">{{url.URL}}</span>
+                </div>
+                <div>
+                  <span class="p-key">Hostname: </span>
+                  <span class="p-value">{{url.Hostname}}</span>
+                </div>
+                <div>
+                  <span class="p-key">MD5: </span>
+                  <span class="p-value">{{url.MD5}}</span>
+                </div>
+              </div>
+            {{/each}}
+
+            {{#if (gt job.Job.Files.length 0)}}
+              <h1 class="p-title">{{fa-icon icon="file" fixedWidth=true}} Files</h1>
+            {{/if}}
+            {{#each job.Job.Files as |file|}}
+              <div class="info-block">
+                <div>
+                  <span class="p-key">Name: </span>
+                  <span class="p-value">{{file.Name}}</span>
+                </div>
+                <div>
+                  <span class="p-key">MD5: </span>
+                  <span class="p-value">{{file.MD5}}</span>
+                </div>
+                <div>
+                  <span class="p-key">SHA256: </span>
+                  <span class="p-value">{{file.SHA256}}</span>
+                </div>
+                <div>
+                  <span class="p-key">MimeType: </span>
+                  <span class="p-value">{{file.MimeType}}</span>
+                </div>
+                <div>
+                  <span class="p-key">Size: </span>
+                  <span class="p-value">{{file.Size}}</span>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+      </div>
     {{/each}}
+  {{/if}}
+  {{!-- end of jobs --}}
+
+  {{#if (or (eq activeTab "submissions") details.submitOnly)}}
+    <div class="form-group mt-1">
+      <label>URL</label>
+      {{input
+        class="form-control form-control-sm"
+        onclick=(action (mut urlToScan value="target.value"))
+        value=urlToScan
+        placeholder="URL to submit ..."
+        required="true"
+      }}
+      {{#if urlValidationError}}
+        <div class="alert alert-danger mt-1">
+          {{urlValidationError}}
+        </div>
+      {{/if}}
+      <div class="p-footnote pt-1">
+        The target URL to visit and analyze. Uses the default engines for your account.
+      </div>
+
+      <label class="pt-2">Priority</label>
+      <select class="form-control form-control-sm" onchange={{action (mut priority) value="target.value"}} disabled={{running}}>
+        <option disabled>Select a job priority</option>
+        <option value="1">Highest</option>
+        <option value="5">High</option>
+        <option selected value="10">Normal</option>
+        <option value="15">Low</option>
+        <option value="20">Lower</option>
+      </select>
+      <div class="p-footnote p-block pt-1">The job's priority relative to other jobs. Jobs with a
+        lower priority value are processed before those with a higher value.
+      </div>
+
+
+      <button class="submit-button" {{on "click" (action "submitUrlForScanning")}} disabled={{running}}>
+        {{#if running}}
+          {{fa-icon icon="spinner-third" fixedWidth=true spin=true}}
+        {{else}}
+          Submit URL
+        {{/if}}
+      </button>
+      {{#if JobID}}
+        <div class="pt-2">
+          <label>The URL was successfully submitted for analysis.</label>
+          <div>
+            <a href="https://app.twinwave.io/job/{{JobID}}">View URL Submission in TwinWave
+              {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+          </div>
+        </div>
+      {{/if}}
+    </div>
   {{/if}}
 {{/if}}
