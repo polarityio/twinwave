@@ -6,9 +6,9 @@
   "entityTypes": [
     "domain",
     "url",
-    "sha256",
-    "md5",
-    "ipv4"
+    "SHA256",
+    "MD5",
+    "IPv4"
   ],
   "onDemandOnly": true,
   "defaultColor": "light-purple",
@@ -40,8 +40,8 @@
       "description": "API Url for Splunk Attack Analyzer (SAA) allows searching indicators via the SAA API ",
       "default": "https://api.twinwave.io",
       "type": "text",
-      "userCanEdit": true,
-      "adminOnly": false
+      "userCanEdit": false,
+      "adminOnly": true
     },
     {
       "key": "apiKey",
@@ -49,8 +49,8 @@
       "description": "Splunk Attack Analyzer API Key that supports searching via the SAA API. ",
       "default": "",
       "type": "password",
-      "userCanEdit": true,
-      "adminOnly": false
+      "userCanEdit": false,
+      "adminOnly": true
     },
     {
       "key": "enableUrlSubmission",
