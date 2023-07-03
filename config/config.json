@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "fb017cc0-cce1-11ed-aeee-075d3490155d",
   "name": "Splunk Attack Analyzer",
   "acronym": "SAA",
   "description": "The Splunk Attack Analyzer (SAA) Polarity Integration searches the SAA API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.",
@@ -27,8 +28,7 @@
     "key": "",
     "passphrase": "",
     "ca": "",
-    "proxy": "",
-    "rejectUnauthorized": true
+    "proxy": ""
   },
   "logging": {
     "level": "info"
