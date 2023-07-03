@@ -24,7 +24,7 @@ module.exports = {
    */
   description:
     'The Splunk Attack Analyzer (SAA) Polarity Integration searches the SAA API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.',
-  entityTypes: ['domain', 'url', 'sha256', 'md5', 'ipv4'],
+  entityTypes: ['domain', 'url', 'SHA256', 'MD5', 'IPv4'],
   onDemandOnly: true,
   defaultColor: 'light-purple',
   /**
@@ -86,8 +86,8 @@ module.exports = {
         'API Url for Splunk Attack Analyzer (SAA) allows searching indicators via the SAA API ',
       default: 'https://api.twinwave.io',
       type: 'text',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'apiKey',
@@ -96,8 +96,8 @@ module.exports = {
         'Splunk Attack Analyzer API Key that supports searching via the SAA API. ',
       default: '',
       type: 'password',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'enableUrlSubmission',
