@@ -1,6 +1,6 @@
 {
   "name": "splunk-attack-analyzer",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "main": "./integration.js",
   "private": true,
   "jest": {
@@ -14,7 +14,7 @@
     "bottleneck": "^2.19.5",
     "circular-json": "^0.5.9",
     "lodash": "^4.17.21",
-    "postman-request": "^2.88.1-postman.32"
+    "postman-request": "^2.88.1-postman.33"
   },
   "devDependencies": {
     "jest": "^27.4.3",

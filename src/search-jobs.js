@@ -49,7 +49,7 @@ const searchJobs = async (entity) => {
   Logger.trace({ response }, 'Fetch Jobs API Response');
 
   // Handle API errors
-  if (!SUCCESS_CODES.includes(response.statusCode)) {
+  if (!response.allowRetry && !SUCCESS_CODES.includes(response.statusCode)) {
     throw new ApiRequestError(`Unexpected status code ${response.statusCode}`, {
       statusCode: response.statusCode,
       body: response.body,

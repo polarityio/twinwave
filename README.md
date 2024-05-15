@@ -1,22 +1,28 @@
-# Polarity TwinWave Integration
+# Polarity Splunk Attack Analyzer Integration
 
-TwinWave is a threat analysis platform that seamlessly integrates best of breed open source projects, third party commercial solutions and their own technology in a purpose built application that fully automates the steps an experienced security analyst or researcher would follow to analyze a suspected threat.
+Splunk Attack Analyzer (SAA) is a threat analysis platform that seamlessly integrates best of breed open source projects, third party commercial solutions and their own technology in a purpose built application that fully automates the steps an experienced security analyst or researcher would follow to analyze a suspected threat.
 
-The TwinWave Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.
+The Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.
 
-<img width="350" alt="Integration Example" src="./assets/twinwave.png">
+To learn more about SAA, please visit https://www.splunk.com/en_us/products/attack-analyzer.html
 
-To learn more about TwinWave, please visit https://www.twinwave.io/
+| ![lookup example](assets/overlay.png) | ![submit url example](assets/submit-url.png) |
+|---------------------------------------|----------------------------------------------|
+| *Lookup by Hash or Domain*            | *Submit URL*                                 |
 
-## TwinWave Integration Options
+## Splunk Attack Analyzer Integration Options
 
-### TwinWave API Url
+### API Url
 
-API Url for TwinWave allows searching indicators via the TwinWave API
+API Url for Splunk Attack Analyzer (SAA) allows searching indicators via the SAA API
 
 ### API Key
 
-API Key provided by TwinWave allows access to make searches using the TwinWave API.
+Splunk Attack Analyzer API Key that supports searching via the SAA API.
+
+### Enable URL Submission
+
+If checked, the integration will support submitting URLs to Splunk Attack Analyzer for any searched URLs.
 
 ### Max Concurrent Search Requests
 

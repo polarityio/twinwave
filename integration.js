@@ -22,6 +22,8 @@ const startup = (logger) => {
  */
 const doLookup = async (entities, options, cb) => {
   try {
+    authenticatedPolarityRequest.initiateLimiter(options);
+
     // set authentication headers and options
     authenticatedPolarityRequest.setAuthHeaders({
       url: options.url,
@@ -36,12 +38,12 @@ const doLookup = async (entities, options, cb) => {
       })
     );
 
-    Logger.trace({ lookupResults }, 'Lookup Results');
+    //Logger.trace({ lookupResults }, 'Lookup Results');
     cb(null, lookupResults);
   } catch (error) {
     const errorAsPojo = parseErrorToReadableJSON(error);
     Logger.error({ error: errorAsPojo }, 'Error in doLookup');
-    cb(error);
+    cb(errorAsPojo);
   }
 };
 
@@ -54,6 +56,25 @@ const onMessage = async (payload, options, cb) => {
         const response = await submitUrlForScanning(payload, options);
         Logger.trace({ response }, 'SUBMIT_URL_FOR_SCANNING Response');
         cb(null, response);
+        break;
+      case 'RETRY_LOOKUP':
+        await doLookup([payload.entity], options, (err, lookupResults) => {
+          if (err) {
+            return cb(err);
+          }
+
+          if (lookupResults.length > 0) {
+            cb(null, lookupResults[0]);
+          } else {
+            Logger.error(
+              { lookupResults },
+              'Unexpected lookup results from search retry'
+            );
+            cb({
+              detail: 'Unexpected error occurred.'
+            });
+          }
+        });
         break;
       default:
         return;
