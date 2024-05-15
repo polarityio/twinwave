@@ -9,6 +9,16 @@ const { getLogger } = require('./logger');
  * @returns {{data: null, entity}|{data: {summary: [string], details}, entity}}
  */
 const createResultObject = (entity, apiResponse, options) => {
+  if (apiResponse.allowRetry) {
+    return {
+      entity,
+      data: {
+        summary: ['Limit Reached'],
+        details: apiResponse
+      }
+    };
+  }
+
   if (isMiss(apiResponse)) {
     if (options.enableUrlSubmission && entity.isURL) {
       return {
