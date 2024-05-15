@@ -1,15 +1,7 @@
-.mb-1 {
-  margin-top: 25px;
-}
-
 .info-block {
   margin: 5px;
   margin-top: 8px;
   margin-bottom: 12px;
-}
-
-.p-value {
-  font-size: 12px;
 }
 
 .retry-btn {
@@ -28,22 +20,120 @@
   font-size: 13px;
 }
 
-.score {
-  margin: 10px 0px 10px 0px;
+ul.highlights {
+  list-style: none;
+  padding-left: 17px;
+  position: relative;
+
+  li{
+    position: relative;
+    margin: 0;
+    padding: 0;
+  }
+
+  li::before{
+    border-top: 1px solid #888;
+    height: 0;
+    top: 9px;
+    width: 8px;
+    content: "";
+    left: -12px;
+    position: absolute;
+  }
+
+  li::after{
+    border-left: 1px solid #888;
+    height: 100%;
+    top: 2px;
+    width: 0;
+    content: "";
+    left: -12px;
+    position: absolute;
+  }
+
+  li:last-child::after{
+    height: 8px;
+  }
 }
 
-.expandable-title {
-  display: block;
-  color: #5ccd18 !important;
-  font-weight: 600;
+.summary-container{
+  border: 1px solid #dedede;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.highlight-container {
+  em{
+    font-style: normal;
+  }
+}
+
+.form-control {
+  height: 27px;
+}
+
+.submit-button {
+  background-color: #0295c0;
+  border-color: transparent;
+  color: #fff;
+  border-radius: 3px;
+  height: 20px;
   margin-top: 10px;
-  margin-bottom: 5px;
-  .text {
-    color: #5ccd18 !important;
-    border-bottom: 1px solid #5ccd18;
-    .desc {
-      color: black !important;
-      font-weight: 400 !important;
+
+  &:hover {
+    background-color: darken(#0295c0, 10%);
+  }
+}
+
+.external-link-icon {
+  font-size: 8px;
+  margin-bottom: 1px;
+}
+
+.content-block {
+  margin-top: 5px;
+  font-size: 13px;
+  border: 1px solid #dedede;
+  border-bottom: 2px solid #dedede;
+  border-radius: 4px;
+
+  &.no-header {
+    padding: 5px;
+  }
+
+  .content-block-header {
+    background-color: #f8f8f8;
+    padding: 5px;
+
+    &:hover {
+      background-color: darken(#f8f8f8, 5%);
+    }
+
+    &.content-open {
+      border-bottom: 1px solid #dedede;
+    }
+
+    &.content-closed {
+      border-bottom: 0px;
     }
   }
+
+  .content-text {
+    padding: 5px;
+  }
+}
+
+.scrollable-block {
+  overflow-y: auto;
+  max-height: 250px;
+  width: 100%;
+
+  &.padded {
+    padding: 5px;
+  }
+}
+
+.p-block {
+  word-wrap: break-word;
+  word-break: break-word;
 }
