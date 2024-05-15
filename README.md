@@ -2,7 +2,7 @@
 
 Splunk Attack Analyzer (SAA) is a threat analysis platform that seamlessly integrates best of breed open source projects, third party commercial solutions and their own technology in a purpose built application that fully automates the steps an experienced security analyst or researcher would follow to analyze a suspected threat.
 
-The Polarity Integration searches the TwinWave API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.
+The Polarity Integration searches the Splunk Attack Analyzer API for Attack Chain data for Domains, URLs, IPs, SHA256 Hashes and MD5 Hashes for phishing related activity and a Score Assessment.
 
 To learn more about SAA, please visit https://www.splunk.com/en_us/products/attack-analyzer.html
 
